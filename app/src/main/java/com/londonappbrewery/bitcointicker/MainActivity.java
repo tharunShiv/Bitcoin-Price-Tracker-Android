@@ -16,7 +16,7 @@ import com.loopj.android.http.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cz.msebera.android.httpclient.entity.mime.Header;
+import cz.msebera.android.httpclient.Header;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Bitcoin", ""+parent.getItemAtPosition(position));
                 Log.d("Bitcoin", "Position is"+position);
                 String finalUrl = BASE_URL + parent.getItemAtPosition(position);
+                Log.d("Bitcoin", "URL: "+finalUrl);
 
+                letsDoSomeNetworking(finalUrl);
             }
 
             @Override
@@ -66,29 +68,39 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: complete the letsDoSomeNetworking() method
     private void letsDoSomeNetworking(String url) {
-
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(url, new JsonHttpResponseHandler() {
 
+            // here when Header[] shows red
+            // hit alt+enter and choose
+            //  import cz.msebera.android.httpclient.Header;
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 // called when response HTTP status is "200 OK"
                 Log.d("Bitcoin", "JSON: " + response.toString());
 
 
+                try {
+                    //extract data from JSON
+                    // last price
+                    String price = response.getString("last");
+                    Log.d("Bitcoin", "last:"+price);
+                    mPriceTextView.setText(price);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject response) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                Log.d("Bitcoin", "Request fail! Status code: " + statusCode);
-                Log.d("Bitcoin", "Fail response: " + response);
+                Log.d("Clima", "Request fail! Status code: " + statusCode);
+                Log.d("Clima", "Fail response: " + response);
                 Log.e("ERROR", e.toString());
 
             }
         });
-
-
     }
 
 
